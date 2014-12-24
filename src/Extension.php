@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Title: Event Espresso iDEAL Add-On
+ * Title: WordPress pay Event Espresso legacy extension
  * Description:
- * Copyright: Copyright (c) 2005 - 2011
+ * Copyright: Copyright (c) 2005 - 2014
  * Company: Pronamic
  * @author Remco Tolsma
- * @version 1.0
+ * @version 1.0.0
  */
-class Pronamic_EventEspresso_IDeal_AddOn {
+class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 	/**
 	 * Slug
 	 *
@@ -29,7 +29,7 @@ class Pronamic_EventEspresso_IDeal_AddOn {
 	 * Bootstrap
 	 */
 	public static function bootstrap() {
-		if ( Pronamic_EventEspresso_EventEspresso::is_active() ) {
+		if ( Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::is_active() ) {
 			add_action( 'init', array( __CLASS__, 'init' ) );
 		}
 	}
@@ -86,7 +86,7 @@ class Pronamic_EventEspresso_IDeal_AddOn {
 					'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' )
 				);
 
-				$data = new Pronamic_WP_Pay_EventEspresso_PaymentData( $payment_data );
+				$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
 
 				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
 
@@ -112,7 +112,7 @@ class Pronamic_EventEspresso_IDeal_AddOn {
 		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
 		if ( $gateway ) {
-			$data = new Pronamic_WP_Pay_EventEspresso_PaymentData( $payment_data );
+			$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
 
 			?>
 			<div id="pronamic-payment-option-dv" class="payment-option-dv">
@@ -292,15 +292,15 @@ class Pronamic_EventEspresso_IDeal_AddOn {
 	public static function update_status_unknown_to_success( Pronamic_Pay_Payment $payment, $can_redirect = false ) {
 		$id = $payment->get_source_id();
 
-		$payment_data                   = Pronamic_EventEspresso_EventEspresso::get_payment_data_by_attendee_id( $id );
-		$payment_data['payment_status'] = Pronamic_EventEspresso_EventEspresso::PAYMENT_STATUS_COMPLETED;
+		$payment_data                   = Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::get_payment_data_by_attendee_id( $id );
+		$payment_data['payment_status'] = Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::PAYMENT_STATUS_COMPLETED;
 		$payment_data['txn_type']       = __( 'iDEAL', 'pronamic_ideal' );
 		$payment_data['txn_id']         = $payment->transaction_id;
 
-		Pronamic_EventEspresso_EventEspresso::update_payment( $payment_data );
-		Pronamic_EventEspresso_EventEspresso::email_after_payment( $payment_data );
+		Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::update_payment( $payment_data );
+		Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::email_after_payment( $payment_data );
 
-		$data = new Pronamic_WP_Pay_EventEspresso_PaymentData( $payment_data );
+		$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
 
 		$url = $data->get_normal_return_url();
 
