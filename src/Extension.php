@@ -305,7 +305,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		$url = $data->get_normal_return_url();
 
 		if ( $can_redirect ) {
-			wp_redirect( $url, 303 );
+			wp_redirect( $url );
 
 			exit;
 		}
