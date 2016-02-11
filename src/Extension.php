@@ -137,10 +137,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 						<form method="post" action="<?php echo esc_attr( $data->get_notify_url() ); ?>">
 							<?php
 
-							if ( $gateway->payment_method_is_required() ) {
-								$gateway->set_payment_method( Pronamic_WP_Pay_PaymentMethods::IDEAL );
-							}
-
 							echo $gateway->get_input_html();
 
 							?>
