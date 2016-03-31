@@ -113,19 +113,19 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 		return $this->data['email'];
 	}
 
-	public function getCustomerName() {
+	public function get_customer_name() {
 		return $this->data['fname'] . ' ' . $this->data['lname'];
 	}
 
-	public function getOwnerAddress() {
+	public function get_address() {
 		return $this->data['address'];
 	}
 
-	public function getOwnerCity() {
+	public function get_city() {
 		return $this->data['city'];
 	}
 
-	public function getOwnerZip() {
+	public function get_zip() {
 		return $this->data['zip'];
 	}
 
