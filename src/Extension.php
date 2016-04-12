@@ -85,7 +85,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 			if ( $gateway ) {
 				$payment_data = array(
-					'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' )
+					'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' ),
 				);
 
 				$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
