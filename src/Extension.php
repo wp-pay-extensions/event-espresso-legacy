@@ -1,4 +1,5 @@
 <?php
+use Pronamic\WordPress\Pay\Plugin;
 
 /**
  * Title: WordPress pay Event Espresso legacy extension
@@ -81,7 +82,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		if ( filter_has_var( INPUT_POST, 'event_espresso_pronamic_ideal' ) ) {
 			$config_id = get_option( self::OPTION_CONFIG_ID );
 
-			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+			$gateway = Plugin::get_gateway( $config_id );
 
 			if ( $gateway ) {
 				$payment_data = array(
@@ -90,12 +91,12 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 				$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
 
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+				$payment = Plugin::start( $config_id, $gateway, $data );
 
 				$error = $gateway->get_error();
 
 				if ( is_wp_error( $error ) ) {
-					Pronamic_WP_Pay_Plugin::render_errors( $error );
+					Plugin::render_errors( $error );
 				} else {
 					$gateway->redirect( $payment );
 				}
@@ -111,7 +112,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 	public static function display_gateway( $payment_data ) {
 		$config_id = get_option( self::OPTION_CONFIG_ID );
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$gateway = Plugin::get_gateway( $config_id );
 
 		if ( $gateway ) {
 			$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
@@ -124,7 +125,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 					printf(
 						'<img alt="%s" src="%s" />',
 						esc_attr__( 'Pay with iDEAL', 'pronamic_ideal' ),
-						esc_attr( plugins_url( 'images/ideal.nl/iDEAL-Payoff-2-klein.gif', Pronamic_WP_Pay_Plugin::$file ) )
+						esc_attr( plugins_url( 'images/ideal.nl/iDEAL-Payoff-2-klein.gif', Plugin::$file ) )
 					);
 
 					?>
