@@ -3,7 +3,7 @@
 	"description": "Event Espresso (legacy 3.1) driver for the WordPress payment processing library.",
 	"keywords": ["wordpress", "wp", "pay", "event-espresso", "event", "events", "espresso", "legacy", "extension", "pronamic"],
 	"homepage": "http://www.wp-pay.org/extensions/event-espresso-legacy/",
-	"license": "GPL-3.0+",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Pronamic",
