@@ -1,5 +1,7 @@
 <?php
 use Pronamic\WordPress\Pay\Payments\PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
 
 /**
  * Title: WordPress pay Event Espresso legacy payment data
@@ -73,15 +75,15 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Payment
 	 * Get items
 	 *
 	 * @see Pronamic_Pay_PaymentDataInterface::get_items()
-	 * @return Pronamic_IDeal_Items
+	 * @return Items
 	 */
 	public function get_items() {
 		// Items
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
 		// Item
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->data['attendee_id'] );
 		$item->setDescription( sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] ) );
 		$item->setPrice( $this->data['total_cost'] );
