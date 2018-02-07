@@ -56,7 +56,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		$slug = self::SLUG;
 
 		add_action( "pronamic_payment_status_update_{$slug}_unknown_to_success", array( __CLASS__, 'update_status_unknown_to_success' ), 10, 2 );
-		add_filter( "pronamic_payment_source_text_{$slug}",   array( __CLASS__, 'source_text' ), 10, 2 );
+		add_filter( "pronamic_payment_source_text_{$slug}", array( __CLASS__, 'source_text' ), 10, 2 );
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P
 		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
@@ -133,14 +133,14 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 				<div id="pronamic-payment-option-form-dv" class="hide-if-js">
 					<h3 class="payment_header">
-						<?php _e( 'iDEAL', 'pronamic_ideal' ); ?>
+						<?php esc_html_e( 'iDEAL', 'pronamic_ideal' ); ?>
 					</h3>
 
 					<div class="event_espresso_form_wrapper">
 						<form method="post" action="<?php echo esc_attr( $data->get_notify_url() ); ?>">
 							<?php
 
-							echo $gateway->get_input_html();
+							echo $gateway->get_input_html(); // WPCS: xss ok.
 
 							?>
 
@@ -149,7 +149,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 								printf(
 									'<input class="ideal-button allow-leave-page" type="submit" name="event_espresso_pronamic_ideal" value="%s" />',
-									__( 'Pay with iDEAL', 'pronamic_ideal' )
+									esc_html__( 'Pay with iDEAL', 'pronamic_ideal' )
 								);
 
 								?>
@@ -158,7 +158,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 					</div>
 
 					<p class="choose-diff-pay-option-pg">
-						<a class="hide-the-displayed" rel="pronamic-payment-option-form" style="cursor:pointer;"><?php _e( 'Choose a different payment option', 'pronamic_ideal' ); ?></a>
+						<a class="hide-the-displayed" rel="pronamic-payment-option-form" style="cursor:pointer;"><?php esc_html_e( 'Choose a different payment option', 'pronamic_ideal' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -222,11 +222,11 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 		?>
 		<div class="metabox-holder">
-			<div class="postbox <?php echo $postbox_style; ?>">
+			<div class="postbox <?php echo esc_attr( $postbox_style ); ?>">
 				<div title="<?php esc_attr_e( 'Click to toggle', 'pronamic_ideal' ); ?>" class="handlediv"><br /></div>
 
 				<h3 class="hndle">
-					<?php _e( 'Pronamic iDEAL', 'pronamic_ideal' ); ?>
+					<?php esc_html_e( 'Pronamic Pay', 'pronamic_ideal' ); ?>
 				</h3>
 
 				<div class="inside">
@@ -234,8 +234,8 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 						<ul>
 							<?php if ( $is_active ) : ?>
 
-								<li class="red_alert pointer" onclick="location.href='<?php echo add_query_arg( 'deactivate_pronamic_ideal', true, $url ); ?>';" style="width:30%;">
-									<strong><?php _e( 'Deactivate Pronamic iDEAL?', 'pronamic_ideal' ); ?></strong>
+								<li class="red_alert pointer" onclick="location.href='<?php echo esc_url( add_query_arg( 'deactivate_pronamic_ideal', true, $url ) ); ?>';" style="width:30%;">
+									<strong><?php esc_html_e( 'Deactivate Pronamic Pay?', 'pronamic_ideal' ); ?></strong>
 								</li>
 
 								<form method="post" action="">
@@ -245,7 +245,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 												<ul>
 													<li>
 														<label for="pronamic_pay_ideal_event_espresso_config_id">
-															<?php _e( 'Configuration', 'pronamic_ideal' ); ?>
+															<?php esc_html_e( 'Configuration', 'pronamic_ideal' ); ?>
 														</label>
 
 														<br />
@@ -271,8 +271,8 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 							<?php else : ?>
 
-								<li class="green_alert pointer" onclick="location.href='<?php echo add_query_arg( 'activate_pronamic_ideal', true, $url ); ?>';" style="width:30%;">
-									<strong><?php _e( 'Activate Pronamic iDEAL?', 'pronamic_ideal' ); ?></strong>
+								<li class="green_alert pointer" onclick="location.href='<?php echo esc_url( add_query_arg( 'activate_pronamic_ideal', true, $url ) ); ?>';" style="width:30%;">
+									<strong><?php esc_html_e( 'Activate Pronamic Pay?', 'pronamic_ideal' ); ?></strong>
 								</li>
 
 							<?php endif; ?>
@@ -326,9 +326,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 			'all_a'               => 'true',
 		), admin_url( 'admin.php' ) );
 
-		$text  = '';
-
-		$text .= __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
+		$text = __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
