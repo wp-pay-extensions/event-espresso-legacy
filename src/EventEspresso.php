@@ -1,16 +1,18 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
+
 /**
  * Title: Event Espresso
  * Description:
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.0
- * @since 1.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso {
+class EventEspresso {
 	/**
 	 * Payment status incomplete indicator
 	 *
@@ -53,6 +55,8 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso {
 	 * Get payment data by attendee ID
 	 *
 	 * @param string $id
+	 *
+	 * @return array
 	 */
 	public static function get_payment_data_by_attendee_id( $id ) {
 		event_espresso_require_gateway( 'process_payments.php' );
@@ -105,6 +109,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso {
 		 * @see https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/espresso.php#L464
 		 */
 		$filename = EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php';
+
 		if ( is_readable( $filename ) ) {
 			require_once $filename;
 		}
