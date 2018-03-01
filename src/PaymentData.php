@@ -24,8 +24,6 @@ class PaymentData extends Pay_PaymentData {
 	 */
 	private $data;
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Constructs and initializes an Event Espresso iDEAL data proxy
 	 *
@@ -40,8 +38,6 @@ class PaymentData extends Pay_PaymentData {
 		$this->data = $data;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get source indicator
 	 *
@@ -51,8 +47,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_source() {
 		return 'event-espresso';
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get description
@@ -97,10 +91,6 @@ class PaymentData extends Pay_PaymentData {
 		return $items;
 	}
 
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get currency
 	 *
@@ -110,10 +100,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_currency_alphabetic_code() {
 		return 'EUR';
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		return $this->data['email'];
@@ -134,10 +120,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_zip() {
 		return $this->data['zip'];
 	}
-
-	//////////////////////////////////////////////////
-	// URL's
-	//////////////////////////////////////////////////
 
 	public function get_notify_url() {
 		global $org_options;
@@ -170,8 +152,6 @@ class PaymentData extends Pay_PaymentData {
 
 		return get_permalink( $org_options['cancel_return'] );
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_normal_return_url() {
 		return $this->get_return_url();

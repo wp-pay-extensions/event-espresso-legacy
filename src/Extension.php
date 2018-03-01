@@ -32,8 +32,6 @@ class Extension {
 	 */
 	const OPTION_CONFIG_ID = 'pronamic_pay_ideal_event_espreso_config_id';
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Bootstrap
 	 */
@@ -44,8 +42,6 @@ class Extension {
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Initialize
@@ -79,8 +75,6 @@ class Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Process gateway
 	 */
@@ -113,8 +107,6 @@ class Extension {
 			$gateway->redirect( $payment );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Display gateway
@@ -179,8 +171,6 @@ class Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Transaction get attendee ID
 	 *
@@ -189,8 +179,6 @@ class Extension {
 	public static function transactions_get_attendee_id() {
 		return filter_input( INPUT_GET, 'attendee_id', FILTER_SANITIZE_STRING );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Display gateway settings
@@ -300,8 +288,6 @@ class Extension {
 		<?php
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Update lead status of the specified payment
 	 *
@@ -329,8 +315,6 @@ class Extension {
 			exit;
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Source column

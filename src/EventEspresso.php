@@ -34,8 +34,6 @@ class EventEspresso {
 	 */
 	const PAYMENT_STATUS_COMPLETED = 'Completed';
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Check if Event Espresso is active (Automattic/developer style)
 	 *
@@ -48,8 +46,6 @@ class EventEspresso {
 	public static function is_active() {
 		return defined( 'EVENT_ESPRESSO_VERSION' ) && version_compare( EVENT_ESPRESSO_VERSION, '4', '<' );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get payment data by attendee ID
@@ -74,8 +70,6 @@ class EventEspresso {
 		return $data;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Update the payment data
 	 *
@@ -90,8 +84,6 @@ class EventEspresso {
 		// @see https://github.com/eventespresso/event-espresso-core/blob/event-espresso.3.1.24.1.P/gateways/process_payments.php#L75
 		$payment_data = apply_filters( 'filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * E-mail after payment
