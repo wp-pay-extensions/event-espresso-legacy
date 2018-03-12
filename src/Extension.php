@@ -336,6 +336,7 @@ class Extension {
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
 			esc_attr( $url ),
+			/* translators: %s: payment source id */
 			sprintf( __( 'Attendee #%s', 'pronamic_ideal' ), $payment->get_source_id() )
 		);
 

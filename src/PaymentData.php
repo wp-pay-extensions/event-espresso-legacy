@@ -55,6 +55,7 @@ class PaymentData extends Pay_PaymentData {
 	 * @return string
 	 */
 	public function get_description() {
+		/* translators: %s: attendee id */
 		return sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] );
 	}
 
@@ -82,6 +83,7 @@ class PaymentData extends Pay_PaymentData {
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
 		$item = new Item();
 		$item->setNumber( $this->data['attendee_id'] );
+		/* translators: %s: attendee id */
 		$item->setDescription( sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] ) );
 		$item->setPrice( $this->data['total_cost'] );
 		$item->setQuantity( 1 );
