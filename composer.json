@@ -3,7 +3,7 @@
 	"description": "Event Espresso (legacy 3.1) driver for the WordPress payment processing library.",
 	"keywords": ["wordpress", "wp", "pay", "event-espresso", "event", "events", "espresso", "legacy", "extension", "pronamic"],
 	"homepage": "http://www.wp-pay.org/extensions/event-espresso-legacy/",
-	"license": "GPL-3.0+",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Pronamic",
@@ -24,19 +24,25 @@
 		"source": "https://github.com/wp-pay-extensions/event-espresso-legacy"
 	},
 	"autoload": {
-		"classmap": ["src/"]
-	},
-	"repositories":[
-		{
-			"type": "composer",
-			"url": "https://wpackagist.org/"
+		"psr-4": {
+			"Pronamic\\WordPress\\Pay\\Extensions\\EventEspressoLegacy\\": "src/"
 		}
-	],
+	},
+	"config": {
+		"platform": {
+			"php": "5.3.3"
+		}
+	},
 	"require": {
-		"php": ">=5.2.4",
-		"wp-pay/core": ">=1.0.0"
+		"php": "^5.3",
+		"wp-pay/core": "^2.0"
 	},
 	"require-dev": {
-		"satooshi/php-coveralls": "dev-master"
+		"php-coveralls/php-coveralls": "^1.0",
+		"phpmd/phpmd": "^2.4",
+		"phpunit/phpunit": "^4.8",
+		"squizlabs/php_codesniffer": "^2.9",
+		"wimg/php-compatibility": "^8.1",
+		"wp-coding-standards/wpcs": "^0.14.1"
 	}
 }

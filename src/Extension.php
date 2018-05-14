@@ -1,16 +1,23 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
+
+use Pronamic\WordPress\Pay\Admin\AdminModule;
+use Pronamic\WordPress\Pay\Core\PaymentMethods;
+use Pronamic\WordPress\Pay\Payments\Payment;
+use Pronamic\WordPress\Pay\Plugin;
+
 /**
  * Title: WordPress pay Event Espresso legacy extension
  * Description:
- * Copyright: Copyright (c) 2005 - 2016
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.2
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
+class Extension {
 	/**
 	 * Slug
 	 *
@@ -25,21 +32,19 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 	 */
 	const OPTION_CONFIG_ID = 'pronamic_pay_ideal_event_espreso_config_id';
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Bootstrap
 	 */
 	public static function bootstrap() {
-		if ( Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::is_active() ) {
-			add_action( 'init', array( __CLASS__, 'init' ) );
+		if ( ! EventEspresso::is_active() ) {
+			return;
 		}
+
+		add_action( 'init', array( __CLASS__, 'init' ) );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
-	 * Initiliaze
+	 * Initialize
 	 */
 	public static function init() {
 		add_filter( 'action_hook_espresso_display_gateway_settings', array( __CLASS__, 'display_gateway_settings' ) );
@@ -52,10 +57,8 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 		add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-		$slug = self::SLUG;
-
-		add_action( "pronamic_payment_status_update_{$slug}_unknown_to_success", array( __CLASS__, 'update_status_unknown_to_success' ), 10, 2 );
-		add_filter( "pronamic_payment_source_text_{$slug}",   array( __CLASS__, 'source_text' ), 10, 2 );
+		add_action( 'pronamic_payment_status_update_' . self::SLUG . '_unknown_to_success', array( __CLASS__, 'update_status_unknown_to_success' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P
 		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
@@ -72,38 +75,38 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Process gateway
 	 */
 	public static function process_gateway() {
-		if ( filter_has_var( INPUT_POST, 'event_espresso_pronamic_ideal' ) ) {
-			$config_id = get_option( self::OPTION_CONFIG_ID );
+		if ( ! filter_has_var( INPUT_POST, 'event_espresso_pronamic_ideal' ) ) {
+			return;
+		}
 
-			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$config_id = get_option( self::OPTION_CONFIG_ID );
 
-			if ( $gateway ) {
-				$payment_data = array(
-					'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' ),
-				);
+		$gateway = Plugin::get_gateway( $config_id );
 
-				$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
+		if ( ! $gateway ) {
+			return;
+		}
 
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+		$payment_data = array(
+			'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' ),
+		);
 
-				$error = $gateway->get_error();
+		$data = new PaymentData( $payment_data );
 
-				if ( is_wp_error( $error ) ) {
-					Pronamic_WP_Pay_Plugin::render_errors( $error );
-				} else {
-					$gateway->redirect( $payment );
-				}
-			}
+		$payment = Plugin::start( $config_id, $gateway, $data );
+
+		$error = $gateway->get_error();
+
+		if ( is_wp_error( $error ) ) {
+			Plugin::render_errors( $error );
+		} else {
+			$gateway->redirect( $payment );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Display gateway
@@ -111,10 +114,10 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 	public static function display_gateway( $payment_data ) {
 		$config_id = get_option( self::OPTION_CONFIG_ID );
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$gateway = Plugin::get_gateway( $config_id );
 
 		if ( $gateway ) {
-			$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
+			$data = new PaymentData( $payment_data );
 
 			?>
 			<div id="pronamic-payment-option-dv" class="payment-option-dv">
@@ -124,7 +127,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 					printf(
 						'<img alt="%s" src="%s" />',
 						esc_attr__( 'Pay with iDEAL', 'pronamic_ideal' ),
-						esc_attr( plugins_url( 'images/ideal.nl/iDEAL-Payoff-2-klein.gif', Pronamic_WP_Pay_Plugin::$file ) )
+						esc_attr( plugins_url( 'images/ideal.nl/iDEAL-Payoff-2-klein.gif', Plugin::$file ) )
 					);
 
 					?>
@@ -132,14 +135,14 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 				<div id="pronamic-payment-option-form-dv" class="hide-if-js">
 					<h3 class="payment_header">
-						<?php _e( 'iDEAL', 'pronamic_ideal' ); ?>
+						<?php esc_html_e( 'iDEAL', 'pronamic_ideal' ); ?>
 					</h3>
 
 					<div class="event_espresso_form_wrapper">
 						<form method="post" action="<?php echo esc_attr( $data->get_notify_url() ); ?>">
 							<?php
 
-							echo $gateway->get_input_html();
+							echo $gateway->get_input_html(); // WPCS: xss ok.
 
 							?>
 
@@ -148,7 +151,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 								printf(
 									'<input class="ideal-button allow-leave-page" type="submit" name="event_espresso_pronamic_ideal" value="%s" />',
-									__( 'Pay with iDEAL', 'pronamic_ideal' )
+									esc_html__( 'Pay with iDEAL', 'pronamic_ideal' )
 								);
 
 								?>
@@ -157,7 +160,9 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 					</div>
 
 					<p class="choose-diff-pay-option-pg">
-						<a class="hide-the-displayed" rel="pronamic-payment-option-form" style="cursor:pointer;"><?php _e( 'Choose a different payment option', 'pronamic_ideal' ); ?></a>
+						<a class="hide-the-displayed" rel="pronamic-payment-option-form" style="cursor:pointer;">
+							<?php esc_html_e( 'Choose a different payment option', 'pronamic_ideal' ); ?>
+						</a>
 					</p>
 				</div>
 			</div>
@@ -165,8 +170,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 			<?php
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Transaction get attendee ID
@@ -176,8 +179,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 	public static function transactions_get_attendee_id() {
 		return filter_input( INPUT_GET, 'attendee_id', FILTER_SANITIZE_STRING );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Display gateway settings
@@ -221,11 +222,11 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 		?>
 		<div class="metabox-holder">
-			<div class="postbox <?php echo $postbox_style; ?>">
-				<div title="<?php esc_attr_e( 'Click to toggle', 'pronamic_ideal' ); ?>" class="handlediv"><br /></div>
+			<div class="postbox <?php echo esc_attr( $postbox_style ); ?>">
+				<div title="<?php esc_attr_e( 'Click to toggle', 'pronamic_ideal' ); ?>" class="handlediv"><br/></div>
 
 				<h3 class="hndle">
-					<?php _e( 'Pronamic iDEAL', 'pronamic_ideal' ); ?>
+					<?php esc_html_e( 'Pronamic Pay', 'pronamic_ideal' ); ?>
 				</h3>
 
 				<div class="inside">
@@ -233,8 +234,10 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 						<ul>
 							<?php if ( $is_active ) : ?>
 
-								<li class="red_alert pointer" onclick="location.href='<?php echo add_query_arg( 'deactivate_pronamic_ideal', true, $url ); ?>';" style="width:30%;">
-									<strong><?php _e( 'Deactivate Pronamic iDEAL?', 'pronamic_ideal' ); ?></strong>
+								<li class="red_alert pointer"
+									onclick="location.href='<?php echo esc_url( add_query_arg( 'deactivate_pronamic_ideal', true, $url ) ); ?>';"
+									style="width:30%;">
+									<strong><?php esc_html_e( 'Deactivate Pronamic Pay?', 'pronamic_ideal' ); ?></strong>
 								</li>
 
 								<form method="post" action="">
@@ -244,21 +247,21 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 												<ul>
 													<li>
 														<label for="pronamic_pay_ideal_event_espresso_config_id">
-															<?php _e( 'Configuration', 'pronamic_ideal' ); ?>
+															<?php esc_html_e( 'Configuration', 'pronamic_ideal' ); ?>
 														</label>
 
-														<br />
+														<br/>
 
 														<?php
 
-														Pronamic_WP_Pay_Admin::dropdown_configs( array(
+														AdminModule::dropdown_configs( array(
 															'name'     => self::OPTION_CONFIG_ID,
 															'selected' => $config_id,
 														) );
 
 														?>
 
-														<br />
+														<br/>
 													</li>
 												</ul>
 											</td>
@@ -270,8 +273,10 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 
 							<?php else : ?>
 
-								<li class="green_alert pointer" onclick="location.href='<?php echo add_query_arg( 'activate_pronamic_ideal', true, $url ); ?>';" style="width:30%;">
-									<strong><?php _e( 'Activate Pronamic iDEAL?', 'pronamic_ideal' ); ?></strong>
+								<li class="green_alert pointer"
+									onclick="location.href='<?php echo esc_url( add_query_arg( 'activate_pronamic_ideal', true, $url ) ); ?>';"
+									style="width:30%;">
+									<strong><?php esc_html_e( 'Activate Pronamic Pay?', 'pronamic_ideal' ); ?></strong>
 								</li>
 
 							<?php endif; ?>
@@ -283,26 +288,24 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		<?php
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param Pronamic_Pay_Payment $payment
-	 * @param bool                 $can_redirect
+	 * @param Payment $payment
+	 * @param bool    $can_redirect
 	 */
-	public static function update_status_unknown_to_success( Pronamic_Pay_Payment $payment, $can_redirect = false ) {
+	public static function update_status_unknown_to_success( Payment $payment, $can_redirect = false ) {
 		$id = $payment->get_source_id();
 
-		$payment_data                   = Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::get_payment_data_by_attendee_id( $id );
-		$payment_data['payment_status'] = Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::PAYMENT_STATUS_COMPLETED;
-		$payment_data['txn_type']       = __( 'iDEAL', 'pronamic_ideal' );
+		$payment_data                   = EventEspresso::get_payment_data_by_attendee_id( $id );
+		$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_COMPLETED;
+		$payment_data['txn_type']       = PaymentMethods::get_name( PaymentMethods::IDEAL );
 		$payment_data['txn_id']         = $payment->transaction_id;
 
-		Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::update_payment( $payment_data );
-		Pronamic_WP_Pay_Extensions_EventEspressoLegacy_EventEspresso::email_after_payment( $payment_data );
+		EventEspresso::update_payment( $payment_data );
+		EventEspresso::email_after_payment( $payment_data );
 
-		$data = new Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData( $payment_data );
+		$data = new PaymentData( $payment_data );
 
 		$url = $data->get_normal_return_url();
 
@@ -313,25 +316,27 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Source column
+	 *
+	 * @param string  $text
+	 * @param Payment $payment
+	 *
+	 * @return string
 	 */
-	public static function source_text( $text, Pronamic_Pay_Payment $payment ) {
+	public static function source_text( $text, Payment $payment ) {
 		$url = add_query_arg( array(
 			'page'                => 'events',
 			'event_admin_reports' => 'event_list_attendees',
 			'all_a'               => 'true',
 		), admin_url( 'admin.php' ) );
 
-		$text  = '';
-
-		$text .= __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
+		$text = __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
 			esc_attr( $url ),
+			/* translators: %s: payment source id */
 			sprintf( __( 'Attendee #%s', 'pronamic_ideal' ), $payment->get_source_id() )
 		);
 

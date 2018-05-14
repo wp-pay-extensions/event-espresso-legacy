@@ -1,24 +1,28 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
+
+use Pronamic\WordPress\Pay\Payments\PaymentData as Pay_PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
+
 /**
  * Title: WordPress pay Event Espresso legacy payment data
  * Description:
- * Copyright: Copyright (c) 2005 - 2016
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.3
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronamic_WP_Pay_PaymentData {
+class PaymentData extends Pay_PaymentData {
 	/**
 	 * Data
 	 *
 	 * @var array
 	 */
 	private $data;
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Constructs and initializes an Event Espresso iDEAL data proxy
@@ -34,8 +38,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 		$this->data = $data;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get source indicator
 	 *
@@ -46,8 +48,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 		return 'event-espresso';
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get description
 	 *
@@ -55,6 +55,7 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 	 * @return string
 	 */
 	public function get_description() {
+		/* translators: %s: attendee id */
 		return sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] );
 	}
 
@@ -72,16 +73,17 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 	 * Get items
 	 *
 	 * @see Pronamic_Pay_PaymentDataInterface::get_items()
-	 * @return Pronamic_IDeal_Items
+	 * @return Items
 	 */
 	public function get_items() {
 		// Items
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
 		// Item
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->data['attendee_id'] );
+		/* translators: %s: attendee id */
 		$item->setDescription( sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] ) );
 		$item->setPrice( $this->data['total_cost'] );
 		$item->setQuantity( 1 );
@@ -90,10 +92,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 
 		return $items;
 	}
-
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get currency
@@ -104,10 +102,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 	public function get_currency_alphabetic_code() {
 		return 'EUR';
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		return $this->data['email'];
@@ -128,10 +122,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 	public function get_zip() {
 		return $this->data['zip'];
 	}
-
-	//////////////////////////////////////////////////
-	// URL's
-	//////////////////////////////////////////////////
 
 	public function get_notify_url() {
 		global $org_options;
@@ -164,8 +154,6 @@ class Pronamic_WP_Pay_Extensions_EventEspressoLegacy_PaymentData extends Pronami
 
 		return get_permalink( $org_options['cancel_return'] );
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_normal_return_url() {
 		return $this->get_return_url();
