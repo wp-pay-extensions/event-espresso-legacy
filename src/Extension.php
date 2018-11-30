@@ -62,6 +62,8 @@ class Extension {
 		add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
 
 		add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P
 		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
@@ -367,11 +369,16 @@ class Extension {
 	 * @return string
 	 */
 	public static function source_text( $text, Payment $payment ) {
-		$url = add_query_arg( array(
-			'page'                => 'events',
-			'event_admin_reports' => 'event_list_attendees',
-			'all_a'               => 'true',
-		), admin_url( 'admin.php' ) );
+		$url = add_query_arg(
+			array(
+				'page'                => 'events',
+				'event_admin_reports' => 'event_list_attendees',
+				'all_a'               => 'true',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		$url = self::source_url( $url, $payment );
 
 		$text = __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
 
@@ -383,5 +390,47 @@ class Extension {
 		);
 
 		return $text;
+	}
+
+	/**
+	 * Source description.
+	 *
+	 * @param string  $description Source description.
+	 * @param Payment $payment     Pronamic payment.
+	 *
+	 * @return string
+	 */
+	public static function source_description( $description, Payment $payment ) {
+		return __( 'Event Espresso Attendee', 'pronamic_ideal' );
+	}
+
+	/**
+	 * Source URL.
+	 *
+	 * @param string  $url     Source URL.
+	 * @param Payment $payment Pronamic payment.
+	 *
+	 * @return string
+	 */
+	public static function source_url( $url, Payment $payment ) {
+		$attendee_id = $payment->get_source_id();
+
+		$attendee = espresso_get_attendee_meta_value( $attendee_id, 'original_attendee_details' );
+
+		$attendee = unserialize( $attendee );
+
+		$url = add_query_arg(
+			array(
+				'page'                => 'events',
+				'event_admin_reports' => 'edit_attendee_record',
+				'event_id'            => $attendee['event_id'],
+				'registration_id'     => $attendee['registration_id'],
+				'form_action'         => 'edit_attendee',
+				'id'                  => $attendee_id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		return $url;
 	}
 }
