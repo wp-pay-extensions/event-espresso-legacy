@@ -37,9 +37,9 @@ class EventEspresso {
 	/**
 	 * Check if Event Espresso is active (Automattic/developer style)
 	 *
-	 * @see https://github.com/eventespresso/event-espresso-core/blob/master/espresso.php#L37
-	 * @see http://plugins.trac.wordpress.org/browser/event-espresso-free/tags/3.1.35.L/espresso.php#L39
-	 * @see https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
+	 * @link https://github.com/eventespresso/event-espresso-core/blob/master/espresso.php#L37
+	 * @link https://plugins.trac.wordpress.org/browser/event-espresso-free/tags/3.1.35.L/espresso.php#L39
+	 * @link https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
 	 *
 	 * @return boolean
 	 */
@@ -73,7 +73,7 @@ class EventEspresso {
 	/**
 	 * Update the payment data
 	 *
-	 * @see https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/includes/process-registration/payment_page.php#L407
+	 * @link https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/includes/process-registration/payment_page.php#L407
 	 *
 	 * @param array $payment_data
 	 */
@@ -81,14 +81,14 @@ class EventEspresso {
 		event_espresso_require_gateway( 'process_payments.php' );
 
 		// Apply filter to save payment data in database
-		// @see https://github.com/eventespresso/event-espresso-core/blob/event-espresso.3.1.24.1.P/gateways/process_payments.php#L75
+		// @link https://github.com/eventespresso/event-espresso-core/blob/event-espresso.3.1.24.1.P/gateways/process_payments.php#L75
 		$payment_data = apply_filters( 'filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data );
 	}
 
 	/**
 	 * E-mail after payment
 	 *
-	 * @see https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/includes/process-registration/payment_page.php#L407
+	 * @link https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/includes/process-registration/payment_page.php#L407
 	 *
 	 * @param array $payment_data
 	 */
@@ -98,7 +98,7 @@ class EventEspresso {
 		/*
 		 * Load the email.php functions file
 		 *
-		 * @see https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/espresso.php#L464
+		 * @link https://github.com/eventespresso/event-espresso-legacy/blob/3.1.35.P/espresso.php#L464
 		 */
 		$filename = EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php';
 

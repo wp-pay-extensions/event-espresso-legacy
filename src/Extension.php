@@ -4,6 +4,7 @@ namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
 use Pronamic\WordPress\Pay\Admin\AdminModule;
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
+use Pronamic\WordPress\Pay\Core\Statuses;
 use Pronamic\WordPress\Pay\Payments\Payment;
 use Pronamic\WordPress\Pay\Plugin;
 
@@ -14,7 +15,7 @@ use Pronamic\WordPress\Pay\Plugin;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.1.0
  * @since   1.0.0
  */
 class Extension {
@@ -57,8 +58,12 @@ class Extension {
 
 		add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-		add_action( 'pronamic_payment_status_update_' . self::SLUG . '_unknown_to_success', array( __CLASS__, 'update_status_unknown_to_success' ), 10, 2 );
+		add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
+		add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
+
 		add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+		add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P
 		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
@@ -289,30 +294,69 @@ class Extension {
 	}
 
 	/**
-	 * Update lead status of the specified payment
+	 * Payment redirect URL filter.
 	 *
-	 * @param Payment $payment
-	 * @param bool    $can_redirect
+	 * @param string  $url     Redirect URL.
+	 * @param Payment $payment Payment.
+	 *
+	 * @return string
 	 */
-	public static function update_status_unknown_to_success( Payment $payment, $can_redirect = false ) {
-		$id = $payment->get_source_id();
+	public static function redirect_url( $url, Payment $payment ) {
+		$attendee_id = $payment->get_source_id();
 
-		$payment_data                   = EventEspresso::get_payment_data_by_attendee_id( $id );
-		$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_COMPLETED;
-		$payment_data['txn_type']       = PaymentMethods::get_name( PaymentMethods::IDEAL );
-		$payment_data['txn_id']         = $payment->transaction_id;
-
-		EventEspresso::update_payment( $payment_data );
-		EventEspresso::email_after_payment( $payment_data );
+		$payment_data = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
 
 		$data = new PaymentData( $payment_data );
 
 		$url = $data->get_normal_return_url();
 
-		if ( $can_redirect ) {
-			wp_redirect( $url );
+		switch ( $payment->get_status() ) {
+			case Statuses::CANCELLED:
+				$url = $data->get_cancel_url();
 
-			exit;
+				break;
+			case Statuses::EXPIRED:
+				break;
+			case Statuses::FAILURE:
+				break;
+			case Statuses::SUCCESS:
+				$url = $data->get_success_url();
+
+				break;
+			case Statuses::OPEN:
+				break;
+			default:
+				break;
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Update lead status of the specified payment
+	 *
+	 * @param Payment $payment Payment.
+	 */
+	public static function update_status( Payment $payment ) {
+		$attendee_id = $payment->get_source_id();
+
+		$payment_data             = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
+		$payment_data['txn_type'] = PaymentMethods::get_name( PaymentMethods::IDEAL );
+		$payment_data['txn_id']   = $payment->get_transaction_id();
+
+		switch ( $payment->get_status() ) {
+			case Statuses::CANCELLED:
+				$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_INCOMPLETE;
+				EventEspresso::update_payment( $payment_data );
+
+				break;
+			case Statuses::SUCCESS:
+				$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_COMPLETED;
+
+				EventEspresso::update_payment( $payment_data );
+				EventEspresso::email_after_payment( $payment_data );
+
+				break;
 		}
 	}
 
@@ -325,11 +369,16 @@ class Extension {
 	 * @return string
 	 */
 	public static function source_text( $text, Payment $payment ) {
-		$url = add_query_arg( array(
-			'page'                => 'events',
-			'event_admin_reports' => 'event_list_attendees',
-			'all_a'               => 'true',
-		), admin_url( 'admin.php' ) );
+		$url = add_query_arg(
+			array(
+				'page'                => 'events',
+				'event_admin_reports' => 'event_list_attendees',
+				'all_a'               => 'true',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		$url = self::source_url( $url, $payment );
 
 		$text = __( 'Event Espresso', 'pronamic_ideal' ) . '<br />';
 
@@ -341,5 +390,47 @@ class Extension {
 		);
 
 		return $text;
+	}
+
+	/**
+	 * Source description.
+	 *
+	 * @param string  $description Source description.
+	 * @param Payment $payment     Pronamic payment.
+	 *
+	 * @return string
+	 */
+	public static function source_description( $description, Payment $payment ) {
+		return __( 'Event Espresso Attendee', 'pronamic_ideal' );
+	}
+
+	/**
+	 * Source URL.
+	 *
+	 * @param string  $url     Source URL.
+	 * @param Payment $payment Pronamic payment.
+	 *
+	 * @return string
+	 */
+	public static function source_url( $url, Payment $payment ) {
+		$attendee_id = $payment->get_source_id();
+
+		$attendee = espresso_get_attendee_meta_value( $attendee_id, 'original_attendee_details' );
+
+		$attendee = unserialize( $attendee );
+
+		$url = add_query_arg(
+			array(
+				'page'                => 'events',
+				'event_admin_reports' => 'edit_attendee_record',
+				'event_id'            => $attendee['event_id'],
+				'registration_id'     => $attendee['registration_id'],
+				'form_action'         => 'edit_attendee',
+				'id'                  => $attendee_id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		return $url;
 	}
 }

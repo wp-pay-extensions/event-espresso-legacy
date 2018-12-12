@@ -17,6 +17,8 @@
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 
+		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
+
 		<exclude name="WordPress.XSS.EscapeOutput" />
 
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_touch" />

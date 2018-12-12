@@ -13,7 +13,7 @@ use Pronamic\WordPress\Pay\Payments\Items;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.0.0
+ * @version 2.1.0
  * @since   1.0.0
  */
 class PaymentData extends Pay_PaymentData {
@@ -82,11 +82,11 @@ class PaymentData extends Pay_PaymentData {
 		// Item
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
 		$item = new Item();
-		$item->setNumber( $this->data['attendee_id'] );
+		$item->set_number( $this->data['attendee_id'] );
 		/* translators: %s: attendee id */
-		$item->setDescription( sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] ) );
-		$item->setPrice( $this->data['total_cost'] );
-		$item->setQuantity( 1 );
+		$item->set_description( sprintf( __( 'Attendee %s', 'pronamic_ideal' ), $this->data['attendee_id'] ) );
+		$item->set_price( $this->data['total_cost'] );
+		$item->set_quantity( 1 );
 
 		$items->addItem( $item );
 
