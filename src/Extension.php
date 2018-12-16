@@ -65,7 +65,7 @@ class Extension {
 		add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
 		add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 
-		// Fix fatal error since Event Espresso 3.1.29.1.P
+		// Fix fatal error since Event Espresso 3.1.29.1.P.
 		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
 			$gateway_dir  = EVENT_ESPRESSO_GATEWAY_DIR . 'pronamic_ideal';
 			$gateway_init = $gateway_dir . '/init.php';
@@ -115,6 +115,8 @@ class Extension {
 
 	/**
 	 * Display gateway
+	 *
+	 * @param array $payment_data Payment data.
 	 */
 	public static function display_gateway( $payment_data ) {
 		$config_id = get_option( self::OPTION_CONFIG_ID );
@@ -191,7 +193,7 @@ class Extension {
 	public static function display_gateway_settings() {
 		global $espresso_premium, $active_gateways;
 
-		// Handle request
+		// Handle request.
 		if ( isset( $_REQUEST['activate_pronamic_ideal'] ) ) {
 			$active_gateways['pronamic_ideal'] = dirname( __FILE__ );
 
@@ -204,7 +206,7 @@ class Extension {
 			update_option( 'event_espresso_active_gateways', $active_gateways );
 		}
 
-		// Config
+		// Config.
 		$config_id = get_option( self::OPTION_CONFIG_ID );
 
 		if ( filter_has_var( INPUT_POST, self::OPTION_CONFIG_ID ) ) {
@@ -213,16 +215,16 @@ class Extension {
 			update_option( self::OPTION_CONFIG_ID, $config_id );
 		}
 
-		// Active
+		// Active.
 		$is_active = array_key_exists( 'pronamic_ideal', $active_gateways );
 
-		// Postbox style
+		// Postbox style.
 		$postbox_style = '';
 		if ( ! $is_active ) {
 			$postbox_style = 'closed';
 		}
 
-		// URL
+		// URL.
 		$url = add_query_arg( 'page', 'payment_gateways', admin_url( 'admin.php' ) );
 
 		?>
@@ -259,10 +261,12 @@ class Extension {
 
 														<?php
 
-														AdminModule::dropdown_configs( array(
-															'name'     => self::OPTION_CONFIG_ID,
-															'selected' => $config_id,
-														) );
+														AdminModule::dropdown_configs(
+															array(
+																'name'     => self::OPTION_CONFIG_ID,
+																'selected' => $config_id,
+															)
+														);
 
 														?>
 
@@ -363,8 +367,8 @@ class Extension {
 	/**
 	 * Source column
 	 *
-	 * @param string  $text
-	 * @param Payment $payment
+	 * @param string  $text    Source text.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
