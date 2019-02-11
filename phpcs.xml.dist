@@ -38,7 +38,7 @@
 		<exclude name="WordPress.VIP.SuperGlobalInputUsage.AccessDetected" />
 	</rule>
 
-	<rule ref="WordPress.CSRF.NonceVerification.NoNonceVerification">
+	<rule ref="WordPress.Security.NonceVerification.NoNonceVerification">
 		<exclude-pattern>/src/Extension.php</exclude-pattern>
 	</rule>
 </ruleset>
