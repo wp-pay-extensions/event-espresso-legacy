@@ -30,7 +30,7 @@
 
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
 
-		<exclude name="WordPress.XSS.EscapeOutput" />
+		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_touch" />
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.FileWriteDetected" />

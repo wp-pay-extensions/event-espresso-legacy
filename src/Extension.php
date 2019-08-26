@@ -149,7 +149,8 @@ class Extension {
 						<form method="post" action="<?php echo esc_attr( $data->get_notify_url() ); ?>">
 							<?php
 
-							echo $gateway->get_input_html(); // WPCS: xss ok.
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $gateway->get_input_html();
 
 							?>
 
