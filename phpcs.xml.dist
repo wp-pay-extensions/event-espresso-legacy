@@ -1,13 +1,24 @@
 <?xml version="1.0"?>
 
 <ruleset name="WordPress Pay Event Espresso legacy rules">
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs,vendor/wimg/php-compatibility" />
-
 	<config name="minimum_supported_wp_version" value="4.7" />
 
-	<config name="testVersion" value="5.3-99.0" />
+	<config name="testVersion" value="5.3-" />
 
-	<rule ref="PHPCompatibility" />
+	<file>.</file>
+
+	<arg name="colors"/>
+	<arg name="extensions" value="php" />
+	<arg value="sp" />
+
+	<exclude-pattern>node_modules/*</exclude-pattern>
+	<exclude-pattern>tests/bootstrap.php</exclude-pattern>
+	<exclude-pattern>tests/wp-config.php</exclude-pattern>
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>wordpress/*</exclude-pattern>
+	<exclude-pattern type="relative">^wp-content/*</exclude-pattern>
+
+	<rule ref="PHPCompatibilityWP" />
 
 	<rule ref="WordPress">
 		<exclude name="Generic.Files.LowercasedFilename.NotFound" />
@@ -19,7 +30,7 @@
 
 		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize" />
 
-		<exclude name="WordPress.XSS.EscapeOutput" />
+		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.file_ops_touch" />
 		<exclude name="WordPress.VIP.FileSystemWritesDisallow.FileWriteDetected" />
@@ -27,7 +38,7 @@
 		<exclude name="WordPress.VIP.SuperGlobalInputUsage.AccessDetected" />
 	</rule>
 
-	<rule ref="WordPress.CSRF.NonceVerification.NoNonceVerification">
+	<rule ref="WordPress.Security.NonceVerification.NoNonceVerification">
 		<exclude-pattern>/src/Extension.php</exclude-pattern>
 	</rule>
 </ruleset>

@@ -1,6 +1,6 @@
 {
   "name": "event-espresso-legacy",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Event Espresso (legacy 3.1) driver for the WordPress payment processing library",
   "repository": {
     "type": "git",
@@ -36,12 +36,12 @@
   },
   "homepage": "http://www.wp-pay.org/extensions/event-espresso-legacy/",
   "devDependencies": {
-    "grunt": "^1.0.3",
-    "grunt-contrib-jshint": "^2.0.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-jshint": "^2.1.0",
     "grunt-phpcs": "^0.4.0",
     "grunt-phplint": "0.1.0",
     "grunt-phpmd": "^0.1.1",
     "grunt-phpunit": "^0.3.6",
-    "load-grunt-tasks": "^4.0.0"
+    "load-grunt-tasks": "^5.1.0"
   }
 }

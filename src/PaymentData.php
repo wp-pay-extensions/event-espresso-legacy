@@ -9,7 +9,7 @@ use Pronamic\WordPress\Pay\Payments\Items;
 /**
  * Title: WordPress pay Event Espresso legacy payment data
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -27,7 +27,7 @@ class PaymentData extends Pay_PaymentData {
 	/**
 	 * Constructs and initializes an Event Espresso iDEAL data proxy
 	 *
-	 * @param array $data
+	 * @param array $data Data.
 	 */
 	public function __construct( $data ) {
 		parent::__construct();
@@ -76,11 +76,11 @@ class PaymentData extends Pay_PaymentData {
 	 * @return Items
 	 */
 	public function get_items() {
-		// Items
+		// Items.
 		$items = new Items();
 
 		// Item
-		// We only add one total item, because iDEAL cant work with negative price items (discount)
+		// We only add one total item, because iDEAL cant work with negative price items (discount).
 		$item = new Item();
 		$item->set_number( $this->data['attendee_id'] );
 		/* translators: %s: attendee id */
@@ -103,26 +103,56 @@ class PaymentData extends Pay_PaymentData {
 		return 'EUR';
 	}
 
+	/**
+	 * Get email.
+	 *
+	 * @return mixed|string
+	 */
 	public function get_email() {
 		return $this->data['email'];
 	}
 
+	/**
+	 * Get customer name.
+	 *
+	 * @return string
+	 */
 	public function get_customer_name() {
 		return $this->data['fname'] . ' ' . $this->data['lname'];
 	}
 
+	/**
+	 * Get address.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_address() {
 		return $this->data['address'];
 	}
 
+	/**
+	 * Get city.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_city() {
 		return $this->data['city'];
 	}
 
+	/**
+	 * Get ZIP.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_zip() {
 		return $this->data['zip'];
 	}
 
+	/**
+	 * Get notify URL.
+	 *
+	 * @return mixed
+	 */
 	public function get_notify_url() {
 		global $org_options;
 
@@ -136,6 +166,11 @@ class PaymentData extends Pay_PaymentData {
 		);
 	}
 
+	/**
+	 * Get return URL.
+	 *
+	 * @return mixed
+	 */
 	private function get_return_url() {
 		global $org_options;
 
@@ -149,24 +184,49 @@ class PaymentData extends Pay_PaymentData {
 		);
 	}
 
+	/**
+	 * Get cancel return.
+	 *
+	 * @return mixed
+	 */
 	private function get_cancel_return() {
 		global $org_options;
 
 		return get_permalink( $org_options['cancel_return'] );
 	}
 
+	/**
+	 * Get normal return URL.
+	 *
+	 * @return string
+	 */
 	public function get_normal_return_url() {
 		return $this->get_return_url();
 	}
 
+	/**
+	 * Get cancel URL.
+	 *
+	 * @return string
+	 */
 	public function get_cancel_url() {
 		return $this->get_cancel_return();
 	}
 
+	/**
+	 * Get success URL.
+	 *
+	 * @return string
+	 */
 	public function get_success_url() {
 		return $this->get_return_url();
 	}
 
+	/**
+	 * Get error URL.
+	 *
+	 * @return string
+	 */
 	public function get_error_url() {
 		return $this->get_return_url();
 	}
