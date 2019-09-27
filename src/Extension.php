@@ -102,14 +102,13 @@ class Extension {
 
 		$data = new PaymentData( $payment_data );
 
-		$payment = Plugin::start( $config_id, $gateway, $data );
+		try {
+			$payment = Plugin::start( $config_id, $gateway, $data );
 
-		$error = $gateway->get_error();
-
-		if ( is_wp_error( $error ) ) {
-			Plugin::render_errors( $error );
-		} else {
+			// Redirect.
 			$gateway->redirect( $payment );
+		} catch ( \Pronamic\WordPress\Pay\PayException $e ) {
+			$e->render();
 		}
 	}
 
