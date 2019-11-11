@@ -107,8 +107,8 @@ class Extension {
 
 			// Redirect.
 			$gateway->redirect( $payment );
-		} catch ( \Pronamic\WordPress\Pay\PayException $e ) {
-			$e->render();
+		} catch ( \Exception $e ) {
+			Plugin::render_exception( $e );
 		}
 	}
 
