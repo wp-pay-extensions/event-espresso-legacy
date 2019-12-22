@@ -4,7 +4,7 @@ namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
 use Pronamic\WordPress\Pay\Admin\AdminModule;
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
-use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Payments\PaymentStatus;
 use Pronamic\WordPress\Pay\Payments\Payment;
 use Pronamic\WordPress\Pay\Plugin;
 
@@ -15,7 +15,7 @@ use Pronamic\WordPress\Pay\Plugin;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.1.0
+ * @version 2.1.2
  * @since   1.0.0
  */
 class Extension {
@@ -102,14 +102,13 @@ class Extension {
 
 		$data = new PaymentData( $payment_data );
 
-		$payment = Plugin::start( $config_id, $gateway, $data );
+		try {
+			$payment = Plugin::start( $config_id, $gateway, $data );
 
-		$error = $gateway->get_error();
-
-		if ( is_wp_error( $error ) ) {
-			Plugin::render_errors( $error );
-		} else {
+			// Redirect.
 			$gateway->redirect( $payment );
+		} catch ( \Exception $e ) {
+			Plugin::render_exception( $e );
 		}
 	}
 
@@ -316,19 +315,19 @@ class Extension {
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->get_status() ) {
-			case Statuses::CANCELLED:
+			case PaymentStatus::CANCELLED:
 				$url = $data->get_cancel_url();
 
 				break;
-			case Statuses::EXPIRED:
+			case PaymentStatus::EXPIRED:
 				break;
-			case Statuses::FAILURE:
+			case PaymentStatus::FAILURE:
 				break;
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
-			case Statuses::OPEN:
+			case PaymentStatus::OPEN:
 				break;
 			default:
 				break;
@@ -350,12 +349,12 @@ class Extension {
 		$payment_data['txn_id']   = $payment->get_transaction_id();
 
 		switch ( $payment->get_status() ) {
-			case Statuses::CANCELLED:
+			case PaymentStatus::CANCELLED:
 				$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_INCOMPLETE;
 				EventEspresso::update_payment( $payment_data );
 
 				break;
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				$payment_data['payment_status'] = EventEspresso::PAYMENT_STATUS_COMPLETED;
 
 				EventEspresso::update_payment( $payment_data );
