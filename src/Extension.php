@@ -34,6 +34,17 @@ class Extension extends \Pronamic\WordPress\Pay\AbstractPluginIntegration {
 	const OPTION_CONFIG_ID = 'pronamic_pay_ideal_event_espreso_config_id';
 
 	/**
+	 * Construct Event Espresso legacy extension.
+	 *
+	 * @param array $args Arguments.
+	 */
+	public function __construct( $args = array() ) {
+		parent::__construct( $args );
+
+		self::bootstrap();
+	}
+
+	/**
 	 * Bootstrap
 	 */
 	public static function bootstrap() {
