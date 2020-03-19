@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 -
 
+## [2.2.0] - 2020-03-19
+- Extension extends abstract plugin integration.
+
 ## [2.1.2] - 2019-12-22
 - Improved error handling with exceptions.
 - Updated usage of deprecated `addItem()` method.
@@ -34,7 +37,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## 1.0.0 - 2015-01-20
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.2...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.2...2.2.0
 [2.1.2]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.0.0...2.1.0
