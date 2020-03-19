@@ -11,14 +11,14 @@ use Pronamic\WordPress\Pay\Plugin;
 /**
  * Title: WordPress pay Event Espresso legacy extension
  * Description:
- * Copyright: 2005-2019 Pronamic
+ * Copyright: 2005-2020 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
  * @version 2.1.2
  * @since   1.0.0
  */
-class Extension {
+class Extension extends \Pronamic\WordPress\Pay\AbstractPluginIntegration {
 	/**
 	 * Slug
 	 *
@@ -32,6 +32,17 @@ class Extension {
 	 * @var string
 	 */
 	const OPTION_CONFIG_ID = 'pronamic_pay_ideal_event_espreso_config_id';
+
+	/**
+	 * Construct Event Espresso legacy extension.
+	 *
+	 * @param array $args Arguments.
+	 */
+	public function __construct( $args = array() ) {
+		parent::__construct( $args );
+
+		self::bootstrap();
+	}
 
 	/**
 	 * Bootstrap
