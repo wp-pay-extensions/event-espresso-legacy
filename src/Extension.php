@@ -2,6 +2,7 @@
 
 namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
+use Pronamic\WordPress\Pay\AbstractPluginIntegration;
 use Pronamic\WordPress\Pay\Admin\AdminModule;
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
 use Pronamic\WordPress\Pay\Payments\PaymentStatus;
@@ -18,7 +19,7 @@ use Pronamic\WordPress\Pay\Plugin;
  * @version 2.1.2
  * @since   1.0.0
  */
-class Extension extends \Pronamic\WordPress\Pay\AbstractPluginIntegration {
+class Extension extends AbstractPluginIntegration {
 	/**
 	 * Slug
 	 *
@@ -34,58 +35,56 @@ class Extension extends \Pronamic\WordPress\Pay\AbstractPluginIntegration {
 	const OPTION_CONFIG_ID = 'pronamic_pay_ideal_event_espreso_config_id';
 
 	/**
-	 * Construct Event Espresso legacy extension.
-	 *
-	 * @param array $args Arguments.
+	 * Construct legacy Event Espresso plugin integration.
 	 */
-	public function __construct( $args = array() ) {
-		parent::__construct( $args );
+	public function __construct() {
+		parent::__construct();
 
-		self::bootstrap();
+		// Dependencies.
+		$dependencies = $this->get_dependencies();
+
+		$dependencies->add( new EventEspressoDependency() );
 	}
 
 	/**
-	 * Bootstrap
+	 * Setup plugin integration.
+	 *
+	 * @return void
 	 */
-	public static function bootstrap() {
-		if ( ! EventEspresso::is_active() ) {
+	public function setup() {
+		\add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+
+		// Check if dependencies are met and integration is active.
+		if ( ! $this->is_active() ) {
 			return;
 		}
 
-		add_action( 'init', array( __CLASS__, 'init' ) );
-	}
+		\add_filter( 'action_hook_espresso_display_gateway_settings', array( __CLASS__, 'display_gateway_settings' ) );
 
-	/**
-	 * Initialize
-	 */
-	public static function init() {
-		add_filter( 'action_hook_espresso_display_gateway_settings', array( __CLASS__, 'display_gateway_settings' ) );
+		\add_action( 'action_hook_espresso_display_onsite_payment_header', 'espresso_display_onsite_payment_header' );
+		\add_action( 'action_hook_espresso_display_onsite_payment_footer', 'espresso_display_onsite_payment_footer' );
+		\add_action( 'action_hook_espresso_display_onsite_payment_gateway', array( __CLASS__, 'display_gateway' ) );
 
-		add_action( 'action_hook_espresso_display_onsite_payment_header', 'espresso_display_onsite_payment_header' );
-		add_action( 'action_hook_espresso_display_onsite_payment_footer', 'espresso_display_onsite_payment_footer' );
-		add_action( 'action_hook_espresso_display_onsite_payment_gateway', array( __CLASS__, 'display_gateway' ) );
+		\add_filter( 'filter_hook_espresso_transactions_get_attendee_id', array( __CLASS__, 'transactions_get_attendee_id' ) );
 
-		add_filter( 'filter_hook_espresso_transactions_get_attendee_id', array( __CLASS__, 'transactions_get_attendee_id' ) );
+		\add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-		add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
+		\add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
+		\add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
 
-		add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
-		add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
-
-		add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
-		add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
-		add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
+		\add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
+		\add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P.
-		if ( defined( 'EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
-			$gateway_dir  = EVENT_ESPRESSO_GATEWAY_DIR . 'pronamic_ideal';
+		if ( \defined( '\EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
+			$gateway_dir = \EVENT_ESPRESSO_GATEWAY_DIR . 'pronamic_ideal';
 			$gateway_init = $gateway_dir . '/init.php';
 
-			if ( ! is_readable( $gateway_init ) ) {
-				$created = wp_mkdir_p( $gateway_dir );
+			if ( ! \is_readable( $gateway_init ) ) {
+				$created = \wp_mkdir_p( $gateway_dir );
 
 				if ( $created ) {
-					touch( $gateway_init );
+					\touch( $gateway_init );
 				}
 			}
 		}

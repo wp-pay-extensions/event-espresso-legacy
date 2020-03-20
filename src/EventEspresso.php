@@ -35,19 +35,6 @@ class EventEspresso {
 	const PAYMENT_STATUS_COMPLETED = 'Completed';
 
 	/**
-	 * Check if Event Espresso is active (Automattic/developer style)
-	 *
-	 * @link https://github.com/eventespresso/event-espresso-core/blob/master/espresso.php#L37
-	 * @link https://plugins.trac.wordpress.org/browser/event-espresso-free/tags/3.1.35.L/espresso.php#L39
-	 * @link https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
-	 *
-	 * @return boolean
-	 */
-	public static function is_active() {
-		return defined( 'EVENT_ESPRESSO_VERSION' ) && version_compare( EVENT_ESPRESSO_VERSION, '4', '<' );
-	}
-
-	/**
 	 * Get payment data by attendee ID
 	 *
 	 * @param string $id Attendee ID.
