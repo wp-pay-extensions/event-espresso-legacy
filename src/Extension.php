@@ -81,7 +81,7 @@ class Extension extends AbstractPluginIntegration {
 
 		// Fix fatal error since Event Espresso 3.1.29.1.P.
 		if ( \defined( '\EVENT_ESPRESSO_GATEWAY_DIR' ) ) {
-			$gateway_dir = \EVENT_ESPRESSO_GATEWAY_DIR . 'pronamic_ideal';
+			$gateway_dir  = \EVENT_ESPRESSO_GATEWAY_DIR . 'pronamic_ideal';
 			$gateway_init = $gateway_dir . '/init.php';
 
 			if ( ! \is_readable( $gateway_init ) ) {
