@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 -
 
+## [2.3.0] - unreleased
+- Removed payment data class.
+
 ## [2.2.1] - 2020-04-03
 - Updated integration dependencies.
 - Set plugin integration name.
@@ -36,12 +39,13 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 - Removed status code from redirect.
 
 ## [1.0.1] - 2015-03-03
-- Changed WordPress pay core library requirment from ~1.0.0 to >=1.0.0.
+- Changed WordPress pay core library requirment from `~1.0.0` to `>=1.0.0`.
 
 ## 1.0.0 - 2015-01-20
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.2.1...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.2.1...2.3.0
 [2.2.1]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.2...2.2.0
 [2.1.2]: https://github.com/wp-pay-extensions/event-espresso-legacy/compare/2.1.1...2.1.2
