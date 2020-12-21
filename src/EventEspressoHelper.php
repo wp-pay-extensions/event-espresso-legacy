@@ -10,6 +10,13 @@
 
 namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
+use Pronamic\WordPress\Pay\Address;
+use Pronamic\WordPress\Pay\AddressHelper;
+use Pronamic\WordPress\Pay\ContactName;
+use Pronamic\WordPress\Pay\ContactNameHelper;
+use Pronamic\WordPress\Pay\Customer;
+use Pronamic\WordPress\Pay\CustomerHelper;
+
 /**
  * Event Espresso Helper
  *
@@ -33,105 +40,40 @@ class EventEspressoHelper {
 
 	/**
 	 * Get customer from data.
+	 *
+	 * @return Customer|null
 	 */
-	public static function get_name_from_data( $data ) {
-		$name  = self::get_name_from_data( $data );
-		$email = $data['email'];
-
-		$customer_data = array(
-			$name,
-			$email,
+	public static function get_customer_from_data( $data ) {
+		return CustomerHelper::from_array( array(
+			'name'  => self::get_name_from_data( $data ),
+			'email' => $data['email'],
 		);
-
-		$customer_data = \array_filter( $customer_data );
-
-		if ( empty( $customer_data ) ) {
-			return null;
-		}
-
-		$customer = new Customer();
-
-		$customer->set_name( $name );
-
-		if ( ! empty( $email ) ) {
-			$customer->set_email( $email );
-		}
-
-		return $customer;
 	}
 
 	/**
 	 * Get name from data.
+	 *
+	 * @return ContactName|null
 	 */
 	public static function get_name_from_data( $data ) {
-		$first_name = $data['fname'];
-		$last_name  = $data['lname'];
-
-		$name_data = array(
-			$first_name,
-			$last_name,
-		);
-
-		$name_data = \array_filter( $name_data );
-
-		if ( empty( $name_data ) ) {
-			return null;
-		}
-
-		$name = new ContactName();
-
-		if ( ! empty( $first_name ) ) {
-			$name->set_first_name( $first_name );
-		}
-
-		if ( ! empty( $last_name ) ) {
-			$name->set_last_name( $last_name );
-		}
-		
-		return $name;
+		return ContactNameHelper::from_array( array(
+			'first_name' => $data['fname'],
+			'last_name'  => $data['lname'],
+		) );
 	}
 
 	/**
 	 * Get address from data.
+	 *
+	 * @return Address|null
 	 */
 	public static function get_address_from_data( $data ) {
-		$name        = self::get_name_from_data( $data );
-		$line_1      = $data['address'];
-		$postal_code = $data['zip'];
-		$city        = $data['city'];
-
-		$address_data = array(
-			$name,
-			$line_1,
-			$postal_code,
-			$city,
-		);
-
-		$address_data = \array_filter( $address_data );
-
-		if ( empty( $address_data ) ) {
-			return;
-		}
-
-		$address = new Address();
-
-		if ( ! empty( $name ) ) {
-			$address->set_name( $name );
-		}
-
-		if ( ! empty( $line_1 ) ) {
-			$address->set_line_1( $line_1 );
-		}
-
-		if ( ! empty( $postal_code ) ) {
-			$address->set_postal_code( $postal_code );
-		}
-
-		if ( ! empty( $city ) ) {
-			$address->set_city( $city );
-		}
-
-		return $address;
+		return AddressHelper::from_array( array(
+			'name'        => self::get_name_from_data( $data );
+			'line_1'      => $data['address'],
+			'postal_code' => $data['zip'],
+			'city'        => $data['city'],
+		) );
 	}
 
 	/**
