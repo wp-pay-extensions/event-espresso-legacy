@@ -102,7 +102,7 @@ class Extension extends AbstractPluginIntegration {
 			return;
 		}
 
-		$config_id = get_option( self::OPTION_CONFIG_ID );
+		$config_id = \get_option( self::OPTION_CONFIG_ID );
 
 		$gateway = Plugin::get_gateway( $config_id );
 
@@ -110,14 +110,42 @@ class Extension extends AbstractPluginIntegration {
 			return;
 		}
 
-		$payment_data = array(
-			'attendee_id' => apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' ),
-		);
+		$attendee_id = \apply_filters( 'filter_hook_espresso_transactions_get_attendee_id', '' );
 
-		$data = new PaymentData( $payment_data );
+		$data = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
 
+		/**
+		 * Build payment.
+		 */
+		$payment = new Payment();
+
+		$payment->source    = 'event-espresso';
+		$payment->source_id = $attendee_id;
+		$payment->order_id  = $attendee_id;
+
+		// Description.
+		$payment->description = EventEspressoHelper::get_description( $attendee_id );
+
+		$payment->title = EventEspressoHelper::get_description( $attendee_id );
+
+		// Customer.
+		$payment->set_customer( EventEspressoHelper::get_customer_from_data( $data ) );
+
+		// Address.
+		$payment->set_billing_address( EventEspressoHelper::get_address_from_data( $data ) );
+
+		// Currency.
+		$currency = Currency::get_instance( 'EUR' );
+
+		// Amount.
+		$payment->set_total_amount( new TaxedMoney( $data['total_cost'], $currency ) );
+
+		// Configuration.
+		$payment->config_id = $config_id;
+
+		// Start.
 		try {
-			$payment = Plugin::start( $config_id, $gateway, $data );
+			$payment = Plugin::start_payment( $payment );
 
 			// Redirect.
 			$gateway->redirect( $payment );
@@ -322,15 +350,13 @@ class Extension extends AbstractPluginIntegration {
 	public static function redirect_url( $url, Payment $payment ) {
 		$attendee_id = $payment->get_source_id();
 
-		$payment_data = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
+		$data = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
 
-		$data = new PaymentData( $payment_data );
-
-		$url = $data->get_normal_return_url();
+		$url = EventEspressoHelper::get_normal_return_url( $data );
 
 		switch ( $payment->get_status() ) {
 			case PaymentStatus::CANCELLED:
-				$url = $data->get_cancel_url();
+				$url = EventEspressoHelper::get_cancel_return();
 
 				break;
 			case PaymentStatus::EXPIRED:
@@ -338,8 +364,6 @@ class Extension extends AbstractPluginIntegration {
 			case PaymentStatus::FAILURE:
 				break;
 			case PaymentStatus::SUCCESS:
-				$url = $data->get_success_url();
-
 				break;
 			case PaymentStatus::OPEN:
 				break;
