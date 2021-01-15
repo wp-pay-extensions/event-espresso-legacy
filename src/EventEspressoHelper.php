@@ -47,7 +47,7 @@ class EventEspressoHelper {
 		return CustomerHelper::from_array( array(
 			'name'  => self::get_name_from_data( $data ),
 			'email' => $data['email'],
-		);
+		) );
 	}
 
 	/**
@@ -69,7 +69,7 @@ class EventEspressoHelper {
 	 */
 	public static function get_address_from_data( $data ) {
 		return AddressHelper::from_array( array(
-			'name'        => self::get_name_from_data( $data );
+			'name'        => self::get_name_from_data( $data ),
 			'line_1'      => $data['address'],
 			'postal_code' => $data['zip'],
 			'city'        => $data['city'],
