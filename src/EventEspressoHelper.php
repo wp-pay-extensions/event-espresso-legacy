@@ -33,6 +33,7 @@ class EventEspressoHelper {
 	public static function get_description( $attendee_id ) {
 		/* translators: %s: attendee id */
 		return \sprintf(
+			/* translators: %s: attendee ID */
 			\__( 'Attendee %s', 'pronamic_ideal' ),
 			$attendee_id
 		);
@@ -44,9 +45,11 @@ class EventEspressoHelper {
 	 * @return Customer|null
 	 */
 	public static function get_customer_from_data( $data ) {
-		return CustomerHelper::from_array( array(
-			'name'  => self::get_name_from_data( $data ),
-			'email' => $data['email'],
+		return CustomerHelper::from_array(
+			array(
+				'name'  => self::get_name_from_data( $data ),
+				'email' => $data['email'],
+			)
 		);
 	}
 
@@ -56,10 +59,12 @@ class EventEspressoHelper {
 	 * @return ContactName|null
 	 */
 	public static function get_name_from_data( $data ) {
-		return ContactNameHelper::from_array( array(
-			'first_name' => $data['fname'],
-			'last_name'  => $data['lname'],
-		) );
+		return ContactNameHelper::from_array(
+			array(
+				'first_name' => $data['fname'],
+				'last_name'  => $data['lname'],
+			)
+		);
 	}
 
 	/**
@@ -68,12 +73,14 @@ class EventEspressoHelper {
 	 * @return Address|null
 	 */
 	public static function get_address_from_data( $data ) {
-		return AddressHelper::from_array( array(
-			'name'        => self::get_name_from_data( $data );
-			'line_1'      => $data['address'],
-			'postal_code' => $data['zip'],
-			'city'        => $data['city'],
-		) );
+		return AddressHelper::from_array(
+			array(
+				'name'        => self::get_name_from_data( $data ),
+				'line_1'      => $data['address'],
+				'postal_code' => $data['zip'],
+				'city'        => $data['city'],
+			)
+		);
 	}
 
 	/**
