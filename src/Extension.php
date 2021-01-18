@@ -12,7 +12,7 @@ use Pronamic\WordPress\Pay\Plugin;
 /**
  * Title: WordPress pay Event Espresso legacy extension
  * Description:
- * Copyright: 2005-2020 Pronamic
+ * Copyright: 2005-2021 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
