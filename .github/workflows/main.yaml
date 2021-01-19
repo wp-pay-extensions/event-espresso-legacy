@@ -310,7 +310,7 @@ jobs:
         run: npm install
 
       - name: ESLint
-        run: npm run-script eslint
+        run: npm run-script eslint --if-present
 
       - name: Sass Lint
-        run: npm run-script sass-lint
+        run: npm run-script sass-lint --if-present
