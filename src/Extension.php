@@ -2,6 +2,8 @@
 
 namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
+use Pronamic\WordPress\Money\Currency;
+use Pronamic\WordPress\Money\TaxedMoney;
 use Pronamic\WordPress\Pay\AbstractPluginIntegration;
 use Pronamic\WordPress\Pay\Admin\AdminModule;
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
@@ -165,8 +167,6 @@ class Extension extends AbstractPluginIntegration {
 		$gateway = Plugin::get_gateway( $config_id );
 
 		if ( $gateway ) {
-			$data = new PaymentData( $payment_data );
-
 			?>
 			<div id="pronamic-payment-option-dv" class="payment-option-dv">
 				<a id="pronamic-payment-option-lnk" class="pronamic-option-lnk display-the-hidden" rel="pronamic-payment-option-form" style="cursor:pointer;">
@@ -187,7 +187,7 @@ class Extension extends AbstractPluginIntegration {
 					</h3>
 
 					<div class="event_espresso_form_wrapper">
-						<form method="post" action="<?php echo esc_attr( $data->get_notify_url() ); ?>">
+						<form method="post" action="<?php echo esc_attr( EventEspressoHelper::get_notify_url( $payment_data ) ); ?>">
 							<?php
 
 							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -352,7 +352,7 @@ class Extension extends AbstractPluginIntegration {
 
 		$data = EventEspresso::get_payment_data_by_attendee_id( $attendee_id );
 
-		$url = EventEspressoHelper::get_normal_return_url( $data );
+		$url = EventEspressoHelper::get_return_url( $data );
 
 		switch ( $payment->get_status() ) {
 			case PaymentStatus::CANCELLED:
