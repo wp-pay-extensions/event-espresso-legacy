@@ -18,7 +18,7 @@ use Pronamic\WordPress\Pay\Plugin;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 2.1.2
+ * @version 2.3.2
  * @since   1.0.0
  */
 class Extension extends AbstractPluginIntegration {
@@ -360,13 +360,9 @@ class Extension extends AbstractPluginIntegration {
 
 				break;
 			case PaymentStatus::EXPIRED:
-				break;
 			case PaymentStatus::FAILURE:
-				break;
 			case PaymentStatus::SUCCESS:
-				break;
 			case PaymentStatus::OPEN:
-				break;
 			default:
 				break;
 		}
