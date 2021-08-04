@@ -140,7 +140,7 @@ class Extension extends AbstractPluginIntegration {
 		$currency = Currency::get_instance( 'EUR' );
 
 		// Amount.
-		$payment->set_total_amount( new TaxedMoney( $data['total_cost'], $currency ) );
+		$payment->set_total_amount( new Money( $data['total_cost'], $currency ) );
 
 		// Configuration.
 		$payment->config_id = $config_id;
