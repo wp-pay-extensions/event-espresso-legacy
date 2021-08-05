@@ -3,7 +3,7 @@
 namespace Pronamic\WordPress\Pay\Extensions\EventEspressoLegacy;
 
 use Pronamic\WordPress\Money\Currency;
-use Pronamic\WordPress\Money\TaxedMoney;
+use Pronamic\WordPress\Money\Money;
 use Pronamic\WordPress\Pay\AbstractPluginIntegration;
 use Pronamic\WordPress\Pay\Admin\AdminModule;
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
@@ -14,7 +14,7 @@ use Pronamic\WordPress\Pay\Plugin;
 /**
  * Title: WordPress pay Event Espresso legacy extension
  * Description:
- * Copyright: 2005-2020 Pronamic
+ * Copyright: 2005-2021 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -140,7 +140,7 @@ class Extension extends AbstractPluginIntegration {
 		$currency = Currency::get_instance( 'EUR' );
 
 		// Amount.
-		$payment->set_total_amount( new TaxedMoney( $data['total_cost'], $currency ) );
+		$payment->set_total_amount( new Money( $data['total_cost'], $currency ) );
 
 		// Configuration.
 		$payment->config_id = $config_id;
@@ -187,7 +187,7 @@ class Extension extends AbstractPluginIntegration {
 					</h3>
 
 					<div class="event_espresso_form_wrapper">
-						<form method="post" action="<?php echo esc_attr( EventEspressoHelper::get_notify_url( $payment_data ) ); ?>">
+						<form method="post" action="<?php echo \esc_url( EventEspressoHelper::get_notify_url( $payment_data ) ); ?>">
 							<?php
 
 							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
