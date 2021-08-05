@@ -187,7 +187,7 @@ class Extension extends AbstractPluginIntegration {
 					</h3>
 
 					<div class="event_espresso_form_wrapper">
-						<form method="post" action="<?php echo esc_attr( EventEspressoHelper::get_notify_url( $payment_data ) ); ?>">
+						<form method="post" action="<?php echo \esc_url( EventEspressoHelper::get_notify_url( $payment_data ) ); ?>">
 							<?php
 
 							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
