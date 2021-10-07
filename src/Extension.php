@@ -126,7 +126,7 @@ class Extension extends AbstractPluginIntegration {
 		$payment->order_id  = $attendee_id;
 
 		// Description.
-		$payment->description = EventEspressoHelper::get_description( $attendee_id );
+		$payment->set_description( EventEspressoHelper::get_description( $attendee_id ) );
 
 		$payment->title = EventEspressoHelper::get_description( $attendee_id );
 
