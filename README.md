@@ -1,4 +1,4 @@
-# WordPress Pay Extension: Event Espresso (legacy 3.1) 
+# [DEPRECATED] WordPress Pay Extension: Event Espresso (legacy 3.1) 
 
 **Event Espresso (legacy 3.1) driver for the WordPress payment processing library.**
 
